@@ -16,7 +16,13 @@
 
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
+  const solution = [];
+  for (let i = 0; i < n; i++) {
+    const row = new Array(n);
+    row.fill(0);
+    row[i] = 1;
+    solution.push(row);
+  }
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
@@ -24,7 +30,11 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  let solutionCount = 1;
+
+  for (let i = 1; i <= n; i++) {
+    solutionCount *= i;
+  }
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
@@ -32,7 +42,32 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  let solution = [];
+  for (let i = 0; i < n; i++) {
+    const row = new Array(n);
+    row.fill(0);
+    solution.push(row);
+  }
+  if (n === 1) {
+    solution = [[1]];
+  } else if (n !== 0 && n !== 2 && n !== 3) {
+    let rem = n % 6;
+    let even = Array(Math.ceil(n / 2)).fill(0).map( (e, i) => e = i * 2);
+    let odd = Array(Math.floor(n / 2)).fill(0).map( (e, i) => e = i * 2 + 1);
+
+    if (rem === 2) {
+      [even[0], even[1]] = [even[1], even[0]];
+      even.push(even.splice(2, 1));
+    } else if (rem === 3) {
+      odd.push(odd.shift());
+      even.push(even.splice(0, 2));
+    }
+    let positions = odd.concat(even);
+
+    positions.forEach( (row, col) => {
+      solution[row][col] = 1;
+    });
+  }
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;

@@ -119,6 +119,7 @@
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      if (this.rows().length === 0) { return false; }
       let count = this.get(0).length;
       while (count >= 0) {
         if (this.hasColConflictAt(count)) {
