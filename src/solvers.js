@@ -24,7 +24,7 @@ window.findNRooksSolution = function(n) {
     solution.push(row);
   }
 
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  console.log(`Single solution for ${n} rooks: ${JSON.stringify(solution)}`);
   return solution;
 };
 
@@ -36,7 +36,7 @@ window.countNRooksSolutions = function(n) {
     solutionCount *= i;
   }
 
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  console.log(`Number of solutions for ${n} rooks: ${solutionCount}`);
   return solutionCount;
 };
 
@@ -69,14 +69,56 @@ window.findNQueensSolution = function(n) {
     });
   }
 
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  console.log(`Single solution for ${n} queens: ${JSON.stringify(solution)}`);
   return solution;
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
-window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme7
+window.countNQueensSolutions = function(n, leftDiagonal, rightDiagonal, column, sol = 0) {
+  // If does not work on edge cases uncomment this
+  // // if n < 4 return set value
+  // if (n < 4) {
+  //   return n < 2 ? 1 : 0;
+  //} else
+  if (leftDiagonal) {
+    let test = column.reduce((a, e) => { return a += !e; }, 0);
+    if ( test === n) { return 1; }
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+    let current = [...column];
+    current.forEach( function (space, i) {
+      if (space && (!leftDiagonal[i] || !rightDiagonal[i])) {
+        current[i] = 0;
+      }
+    });
+
+    current.forEach( function (val, i) {
+      if (val === 1) {
+        column[i] = 0;
+        let tLD = [...leftDiagonal];
+        tLD.shift();
+        tLD.push(1);
+        if (i > 0) { tLD[i - 1] = 0; }
+        let tRD = [...rightDiagonal];
+        tRD.pop();
+        tRD.unshift(1);
+        if (i < n - 1) { tRD[i + 1] = 0; }
+        sol += countNQueensSolutions(n, tLD, tRD, column);
+        column[i] = 1;
+      }
+    });
+
+    return sol;
+
+  } else {
+    // if 0 return
+    if (n === 0) { return 1; }
+    // Initialize if first call
+    leftDiagonal = Array(n).fill(1);
+    rightDiagonal = Array(n).fill(1);
+    column = Array(n).fill(1);
+    sol += countNQueensSolutions(n, leftDiagonal, rightDiagonal, column);
+  }
+
+  console.log(`Number of solutions for ${n} queens: ${sol}`);
+  return sol;
 };
